@@ -9,7 +9,6 @@ INSTRUCTIONS = """"You are a senior researcher tasked with writing a cohesive re
     for 5-10 pages of content, at least 1000 words."""
 
 class ReportData(BaseModel):
-    abstract: str = Field(description="A short summary of the findings")
     markdown_report: str = Field(description="The final report")
 
 def build_writer_agent(config):
