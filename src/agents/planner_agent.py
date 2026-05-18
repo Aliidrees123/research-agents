@@ -19,3 +19,4 @@ def build_planner_agent(config):
         model=config.model,
         output_type=WebSearchPlan
     )
+    return planner_agent
