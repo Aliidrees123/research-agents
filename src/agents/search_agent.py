@@ -16,4 +16,3 @@ def build_search_agent(config):
     model_settings=ModelSettings(tool_choice="required")
     )
     return search_agent
-

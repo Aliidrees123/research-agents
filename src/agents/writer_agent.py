@@ -18,3 +18,4 @@ def build_writer_agent(config):
         model=config.model,
         output_type=ReportData
     )
+    return writer_agent

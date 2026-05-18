@@ -12,3 +12,4 @@ def build_review_agent(config):
         instructions=INSTRUCTIONS,
         model=config.model
     )
+    return review_agent
