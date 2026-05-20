@@ -22,16 +22,20 @@ class EssayOrchestrator:
         return final_essay
 
     async def plan_queries(self, query: str) -> WebSearchPlan:
+        print("Planning queries")
         result = await Runner.run(self.plan_agent, f'Query: {query}')
+        print("Queries planned")
         return result.final_output_as(WebSearchPlan)
     
     async def conduct_searches(self, search_plan: WebSearchPlan) -> list[str]:
+        print("Creating tasks")
         tasks = [asyncio.create_task(self.search(item)) for item in search_plan.searches]
         results = []
         for task in asyncio.as_completed(tasks):
             result = await task
             if result is not None:
                 results.append(result)
+        print("Finalising summaries")
         return results
     
     async def search(self, item: WebSearchItem) -> str | None:
@@ -44,16 +48,22 @@ class EssayOrchestrator:
             return None
 
     async def write_essay(self, query: str, search_results: list[str]) -> str:
+        print("Writing essay")
         prompt = f'Original query: {query}\nSummarised search results: {search_results}'
         result = await Runner.run(self.writer_agent, prompt)
+        print("Essay written")
         return result.final_output
 
     async def review_essay(self, query: str, search_results: list[str], report: str) -> Feedback:
+        print("Reviewing essay")
         prompt = f'Original query: {query}\nSummarised search results: {search_results}\nEssay draft: {report}'
         result = await Runner.run(self.review_agent, prompt)
+        print("Essay reviewed")
         return result.final_output_as(Feedback)
     
     async def edit_essay(self, report: str, feedback: Feedback) -> str:
+        print("Editing essay")
         prompt = f'Report: {report}\nFeedback: {feedback.model_dump()}'
         result = await Runner.run(self.edit_agent, prompt)
+        print("Essay edited")
         return result.final_output
