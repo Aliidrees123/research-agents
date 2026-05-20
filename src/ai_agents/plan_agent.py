@@ -12,11 +12,11 @@ class WebSearchItem(BaseModel):
 class WebSearchPlan(BaseModel):
     searches: list[WebSearchItem] = Field(description="A list of web searches to perform to best answr the query.")
 
-def build_planner_agent(config):
-    planner_agent = Agent(
-        name="PlannerAgent",
+def build_plan_agent(config):
+    plan_agent = Agent(
+        name="PlanAgent",
         instructions=INSTRUCTIONS,
         model=config.model,
         output_type=WebSearchPlan
     )
-    return planner_agent
+    return plan_agent

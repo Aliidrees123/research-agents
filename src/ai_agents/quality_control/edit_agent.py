@@ -5,10 +5,10 @@ INSTRUCTIONS = """
     to publication standard. Implement the feedback and respond only with the finished
     essay."""
 
-def build_revision_agent(config):
-    revision_agent = Agent(
-        name="RevisionAgent",
+def build_edit_agent(config):
+    edit_agent = Agent(
+        name="EditAgent",
         instructions=INSTRUCTIONS,
         model=config.model
     )
-    return revision_agent
+    return edit_agent
