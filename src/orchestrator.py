@@ -1,7 +1,7 @@
 import asyncio
 from agents import Runner
 from ai_agents.plan_agent import WebSearchItem, WebSearchPlan
-from ai_agents.writer_agent import ReportData
+from ai_agents.quality_control.review_agent import Feedback
 
 
 class EssayOrchestrator:
@@ -12,6 +12,14 @@ class EssayOrchestrator:
         self.writer_agent = writer_agent
         self.review_agent = review_agent
         self.edit_agent = edit_agent
+
+    async def run_pipeline(self, query):
+        queries = await self.plan_queries(query)
+        summarisations = await self.conduct_searches(queries)
+        essay_draft = await self.write_essay(query, summarisations)
+        essay_feedback = await self.review_essay(query, summarisations, essay_draft)
+        final_essay = await self.edit_essay(essay_draft, essay_feedback)
+        return final_essay
 
     async def plan_queries(self, query: str) -> WebSearchPlan:
         result = await Runner.run(self.plan_agent, f'Query: {query}')
@@ -40,14 +48,12 @@ class EssayOrchestrator:
         result = await Runner.run(self.writer_agent, prompt)
         return result.final_output
 
-    async def review_essay(self, query: str, search_results: list[str], report: str) -> str:
+    async def review_essay(self, query: str, search_results: list[str], report: str) -> Feedback:
         prompt = f'Original query: {query}\nSummarised search results: {search_results}\nEssay draft: {report}'
         result = await Runner.run(self.review_agent, prompt)
-        return result.final_output
+        return result.final_output_as(Feedback)
     
-    async def edit_essay(self, report: ReportData, feedback: str) -> str:
-        prompt = f'Report: {report}\nFeedback: {feedback}'
+    async def edit_essay(self, report: str, feedback: Feedback) -> str:
+        prompt = f'Report: {report}\nFeedback: {feedback.model_dump()}'
         result = await Runner.run(self.edit_agent, prompt)
         return result.final_output
-    
-    
