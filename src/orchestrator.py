@@ -1,6 +1,6 @@
 import asyncio
 from agents import Runner
-from ai_agents.planner_agent import WebSearchItem, WebSearchPlan
+from ai_agents.plan_agent import WebSearchItem, WebSearchPlan
 from ai_agents.writer_agent import ReportData
 
 
@@ -35,12 +35,12 @@ class EssayOrchestrator:
         except Exception:
             return None
 
-    async def write_essay(self, query: str, search_results: list[str]) -> ReportData:
+    async def write_essay(self, query: str, search_results: list[str]) -> str:
         prompt = f'Original query: {query}\nSummarised search results: {search_results}'
         result = await Runner.run(self.writer_agent, prompt)
-        return result.final_output_as(ReportData)
+        return result.final_output
 
-    async def review_essay(self, query: str, search_results: list[str], report: ReportData) -> str:
+    async def review_essay(self, query: str, search_results: list[str], report: str) -> str:
         prompt = f'Original query: {query}\nSummarised search results: {search_results}\nEssay draft: {report}'
         result = await Runner.run(self.review_agent, prompt)
         return result.final_output
